@@ -3,8 +3,6 @@
 #TODO At the download finished notification put the number of episodes actualy download. Hint: check if download button es pressed
 # by signals: http://www.galago-project.org/specs/notification/0.9/x408.html#signal-action-invoked
 
-
-
 #TODO hacer package
 # dependencias: notify-send.sh -> https://aur.archlinux.org/packages/notify-send.sh
 # gpodder -> https://archlinux.org/packages/community/any/gpodder/
