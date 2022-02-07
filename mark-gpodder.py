@@ -1,25 +1,30 @@
 #!/usr/bin/python
-#TODO hacer un botón que los marque todos como vistos: no se puede hacer por comando gpo, así hacer mirar una librería de python para tocar la bd sqlite desde aquí
 
 import sqlite3
-from sqlite3 import Error
+import os
 
-QUERY1 = "SELECT id, title FROM episode WHERE is_new = 1"
-QUERY2 = ''' UPDATE episode
+print("mark-gpodder!!! - entrando")
+
+#QUERY_DEBUG = "SELECT id, title FROM episode WHERE is_new = 1"
+QUERY = ''' UPDATE episode
               SET is_new = 0
               WHERE id IN (SELECT id FROM episode WHERE is_new = 1) '''
 
-connection = sqlite3.connect("/home/frontier/gPodder/Database")
+USER_PATH = os.path.expanduser('~')
+GPODDER_DB_PATH = "/gPodder/Database"
+#connection = sqlite3.connect("/home/frontier/gPodder/Database")
+connection = sqlite3.connect(USER_PATH + GPODDER_DB_PATH)
 cur = connection.cursor()
 
-cur.execute(QUERY2)
-#cur.execute(QUERY1)
+cur.execute(QUERY)
 
+# DEBUG
 #rows = cur.fetchall()
 #for row in rows:
 #	print(row)
 
-
 connection.commit()
-#connection.rollback()
+
 connection.close()
+
+print("mark-gpodder!!! - saliendo")

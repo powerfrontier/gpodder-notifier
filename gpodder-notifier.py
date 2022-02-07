@@ -155,7 +155,7 @@ action_open = "--action=Open gPodder:gpodder"
 action_default = "--default-action=gpodder"
 
 if text_pending[0] == "#" :
-	action_mark_old = "--action=Mark as old:python /media/Datos/Proyectos/gpodder-notifier/mark-gpodder.py"
+	action_mark_old = "--action=Mark as old:python ./mark-gpodder.py"
 	action_download = "--action=Download all:gpo download && notify-send 'Podcasts downloads:' 'Finished'"
 	subprocess.call([notify_send_command, icon, action_open, action_mark_old, action_download, action_default, head, msg])
 else: # Case of no pending episodes text_pending="0 episodios nuevos"
