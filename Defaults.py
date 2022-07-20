@@ -6,13 +6,3 @@ MAX_PODCASTS = 6
 #MAX_PODCASTS = 1 #debug
 MAX_FAIL_PODCASTS = 8 
 LIST_SYMBOL = '#'
-
-
-
-
-
-
-
-
-
-dsaf= 534
