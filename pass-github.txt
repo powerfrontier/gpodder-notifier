@@ -1,3 +1,0 @@
-user: powerfrontier
-token pass: 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  <- no se pueden usar ya la contraseña normal de la cuenta para acceder remotamente mediante programas al github
-
