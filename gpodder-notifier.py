@@ -119,9 +119,14 @@ def process_text(text_update, text_pending):
 
 	if nFail > 0 :
 		msg = msg + "<b>" + "[FAIL]: " + str(nFail) + "</b>" + "\n"
+		j = 0
 		for i in range(len(lineasFail)) :
-			if lineasFail[i] == 1 :
-				msg = msg + "    " + lines_update[i].split("[")[0].strip() + "\n"
+			if j <= Defaults.MAX_FAIL_PODCASTS :
+				if lineasFail[i] == 1 :
+					msg = msg + "    " + lines_update[i].split("[")[0].strip() + "\n"
+					j +=  1
+		if nFail >= Defaults.MAX_FAIL_PODCASTS :
+			msg = "....\n....\nand more podcasts that failed"
 		msg = msg + "\n"
 	else :
 		msg = msg + "[FAIL]: 0\n\n"
@@ -149,7 +154,7 @@ def process_text(text_update, text_pending):
 			msg = msg + "\n"
 
 		if len(podcasts_episodes) > int(Defaults.MAX_PODCASTS) :
-			msg = msg + "....\n....\nand more\n"
+			msg = msg + "....\n....\nand more podcasts with new episodes\n"
 
 	else: # Case of no pending episodes text_pending="0 episodios nuevos"
 		number_new_episodes = text_pending
@@ -189,8 +194,8 @@ gpo_command_pending = "pending"
 notify_send_command = "notify-send.sh"
 #text_update = ""
 #text_pending= ""
-#text_update = subprocess.check_output(["gpo", gpo_command_update]).decode(encoding)
-#text_pending = subprocess.check_output(["gpo", gpo_command_pending]).decode(encoding)
+text_update = subprocess.check_output(["gpo", gpo_command_update]).decode(encoding)
+text_pending = subprocess.check_output(["gpo", gpo_command_pending]).decode(encoding)
 
 
 if diff > cooldown :
@@ -215,9 +220,9 @@ if diff > cooldown :
 		action_mark_old = "--action=Mark as old:python ./mark-gpodder.py"
 		# debug action_mark_old = "--action=Mark as old:zenity --info --title 'Test' --text \"$PWD\""
 		action_download = "--action=Download all:gpo download && notify-send 'Podcasts downloads:' 'Finished'"
-	#	subprocess.call([notify_send_command, icon, action_open, action_mark_old, action_download, action_default, head, msg])
+		subprocess.call([notify_send_command, icon, action_open, action_mark_old, action_download, action_default, head, msg])
 	else: # Case of no pending episodes text_pending="0 episodios nuevos"
-	#	subprocess.call([notify_send_command, icon, action_open, action_default, head, msg])
+		subprocess.call([notify_send_command, icon, action_open, action_default, head, msg])
 		print("end")
 else :
 	print("no ha pasado el tiempo de cooldown")
