@@ -5,6 +5,7 @@
 
 #TODO hacer package
 # dependencias: notify-send.sh -> https://aur.archlinux.org/packages/notify-send.sh
+#    modulo de python configargparse
 # gpodder -> https://archlinux.org/packages/community/any/gpodder/
 
 #TODO hacer que se procesen argumentos de entrada y que algunos sean:
@@ -16,12 +17,12 @@
 
 
 
-# TODO: si no hay conexión a internet la lista de podcasts que fallan puede ser muy larga -> poner un máximo x de podcasts en la lista que fallan
-
 
 import subprocess
 import datetime
 import configargparse
+import os
+
 import Defaults
 
 # parsing arguments and config file
@@ -44,10 +45,21 @@ encoding = "utf-8"
 
 cooldown = datetime.timedelta(minutes=int(options.cooldown_time))
 
+
+USER_PATH = os.path.expanduser('~')
 # lastcheck recovery
-f = open("gpodder-notifier.dat", "r")
-line = f.readline()
-f.close()
+#print(USER_PATH + Defaults.GPODDER_NOTIFIER_USER_PATH + Defaults.GPODDER_NOTIFIER_DAT_NAME)
+try:
+	f = open(USER_PATH + Defaults.GPODDER_NOTIFIER_USER_PATH + Defaults.GPODDER_NOTIFIER_DAT_NAME, "r")
+except FileNotFoundError:
+	#print("file not found!!")
+	f = open(USER_PATH + Defaults.GPODDER_NOTIFIER_USER_PATH + Defaults.GPODDER_NOTIFIER_DAT_NAME, "a+")
+	f.write("2018-11-06 10:20:23.283") # some random past date
+	f.seek(0)
+finally:
+	line = f.readline()
+	#print(line)
+	f.close()
 
 #lastcheck = datetime.datetime(2022, 7, 12, 21, 48)
 lastcheck = datetime.datetime.fromisoformat(line.strip()) #strip is for get rid of the trailing /n character of the return of readline() function
@@ -194,19 +206,17 @@ gpo_command_pending = "pending"
 notify_send_command = "notify-send.sh"
 #text_update = ""
 #text_pending= ""
-text_update = subprocess.check_output(["gpo", gpo_command_update]).decode(encoding)
-text_pending = subprocess.check_output(["gpo", gpo_command_pending]).decode(encoding)
-
 
 if diff > cooldown :
 	print("HA pasado el tiempo de cooldown")
 	lastcheck = now
 	# save lastcheck
-	f = open("gpodder-notifier.dat", "w")
+	f = open(USER_PATH + Defaults.GPODDER_NOTIFIER_USER_PATH + Defaults.GPODDER_NOTIFIER_DAT_NAME, "w")
 	f.write(now.isoformat())
 	f.close()
 
-
+	text_update = subprocess.check_output(["gpo", gpo_command_update]).decode(encoding)
+	text_pending = subprocess.check_output(["gpo", gpo_command_pending]).decode(encoding)
 
 	msg =  process_text(text_update, text_pending)
 
@@ -217,7 +227,8 @@ if diff > cooldown :
 	action_default = "--default-action=gpodder"
 
 	if text_pending[0] == "#" :
-		action_mark_old = "--action=Mark as old:python ./mark-gpodder.py"
+		action_mark_old = "--action=Mark as old:python "+Defaults.GPODDER_NOTIFIER_PATH+"mark-gpodder.py"
+		#print(action_mark_old)
 		# debug action_mark_old = "--action=Mark as old:zenity --info --title 'Test' --text \"$PWD\""
 		action_download = "--action=Download all:gpo download && notify-send 'Podcasts downloads:' 'Finished'"
 		subprocess.call([notify_send_command, icon, action_open, action_mark_old, action_download, action_default, head, msg])

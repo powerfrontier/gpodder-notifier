@@ -3,6 +3,8 @@
 import sqlite3
 import os
 
+import Defaults
+
 print("mark-gpodder!!! - entrando")
 
 #QUERY_DEBUG = "SELECT id, title FROM episode WHERE is_new = 1"
@@ -11,9 +13,9 @@ QUERY = ''' UPDATE episode
               WHERE id IN (SELECT id FROM episode WHERE is_new = 1) '''
 
 USER_PATH = os.path.expanduser('~')
-GPODDER_DB_PATH = "/gPodder/Database"
+
 #connection = sqlite3.connect("/home/frontier/gPodder/Database")
-connection = sqlite3.connect(USER_PATH + GPODDER_DB_PATH)
+connection = sqlite3.connect(USER_PATH + Defaults.GPODDER_DB_PATH)
 cur = connection.cursor()
 
 cur.execute(QUERY)
