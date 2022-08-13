@@ -7,6 +7,7 @@
 # dependencias: notify-send.sh -> https://aur.archlinux.org/packages/notify-send.sh
 #    modulo de python configargparse
 # gpodder -> https://archlinux.org/packages/community/any/gpodder/
+# crear en el directorio home del usuario el directorio .gpodder-notifier
 
 #TODO hacer que se procesen argumentos de entrada y que algunos sean:
 # --verbose: poner algunas trazas de debug
