@@ -9,15 +9,6 @@
 # gpodder -> https://archlinux.org/packages/community/any/gpodder/
 # crear en el directorio home del usuario el directorio .gpodder-notifier
 
-#TODO hacer que se procesen argumentos de entrada y que algunos sean:
-# --verbose: poner algunas trazas de debug
-# --no-update: no hace el gpo update, solo el gpo pending <- ir al github del gpodder y buscar una request de esta feature y sino está perdirla yo
-# --gpodder-home: indica el lugar de instalación de gpodder del usuario (para acceder a la db)
-
-# TODO: hacer fichero de configuracion con opciones por defecto y que se parsee al inicio (hacer este antes del otro)
-
-
-
 
 import subprocess
 import datetime
@@ -30,24 +21,25 @@ import Defaults
 parser = configargparse.ArgParser(default_config_files=['./gpodder-notifier.conf'])
 
 parser.add('-ct', '--cooldown-time', default=Defaults.COOLDOWN_TIME, help='cooldown time in minutes: minimun time beetween updates')  # this option can be set in a config file because it starts with '--'
-parser.add('-c', '--my-config', is_config_file=True, help='config file path')
+parser.add('-gh', '--gpodder-home', default=Defaults.GPODDER_HOME, help='gpodder home of the usesr. If you don\'t manually modified, don\'t touch this')
+parser.add('-c', '--my-config', is_config_file=True, help='custom config file path')
+parser.add('-nu', '--no-update', action='store_true', default=Defaults.GPODDER_NO_UPDATE)
 parser.add('-v', help='verbose', action='store_true')
 
 options = parser.parse_args()
 
-#print(options)
-#print("----------")
-#print(parser.format_help())
-#print("----------")
-#print(parser.format_values())    # useful for logging where different settings came from
-#print("----------")
+if options.v == True :
+	#print(options)
+	print("----------")
+	#print(parser.format_help())
+	print("----------")
+	print(parser.format_values())    # useful for logging where different settings came from
+	print("----------")
 
 encoding = "utf-8"
-
 cooldown = datetime.timedelta(minutes=int(options.cooldown_time))
-
-
 USER_PATH = os.path.expanduser('~')
+
 # lastcheck recovery
 #print(USER_PATH + Defaults.GPODDER_NOTIFIER_USER_PATH + Defaults.GPODDER_NOTIFIER_DAT_NAME)
 try:
@@ -216,8 +208,8 @@ if diff > cooldown :
 	f.write(now.isoformat())
 	f.close()
 
-	text_update = subprocess.check_output(["gpo", gpo_command_update]).decode(encoding)
-	text_pending = subprocess.check_output(["gpo", gpo_command_pending]).decode(encoding)
+	#text_update = subprocess.check_output(["gpo", gpo_command_update]).decode(encoding)
+	#text_pending = subprocess.check_output(["gpo", gpo_command_pending]).decode(encoding)
 
 	msg =  process_text(text_update, text_pending)
 
